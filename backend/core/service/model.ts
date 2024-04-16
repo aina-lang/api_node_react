@@ -9,11 +9,11 @@ export default class Model<T> implements service<T>{
 
     constructor(table: string) {
         this.table = table;
-        this.dbConfig={
-            host:'localhost',
-            user:'dev',
-            password:'#ainachelicoco#',
-            database:'jlc'
+        this.dbConfig = {
+            host: '127.0.0.1',
+            user: 'mercia',
+            password: 'learning',
+            database: 'learning'
         };
         this.db=mysql.createConnection(this.dbConfig);
         this.db.connect();

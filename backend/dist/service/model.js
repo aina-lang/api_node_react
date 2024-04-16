@@ -5,9 +5,9 @@ export default class Model {
         this.table = table;
         this.dbConfig = {
             host: '127.0.0.1',
-            user: 'dev',
-            password: 'ainachelicoco',
-            database: 'jlc'
+            user: 'mercia',
+            password: 'learning',
+            database: 'learning'
         };
         if (!Model.db) {
             try {

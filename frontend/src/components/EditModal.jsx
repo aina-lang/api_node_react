@@ -1,20 +1,26 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UseSweetAlert } from '../context/sweetContext';
 
-function AddModal({ isOpen, setOpen, fetchMaterial }) {
+function EditModal({ isOpen, setOpen, fetchMaterial, material }) {
     const [design, setDesign] = useState('');
     const [quantite, setQuantite] = useState(1);
     const [etat, setEtat] = useState('Mauvais');
-    const { showLoading, close, fire} = UseSweetAlert();
+    const { showLoading, close, fire } = UseSweetAlert();
 
+    useEffect(() => {
+        if (material) {
+            setDesign(material.design);
+            setQuantite(material.quantite);
+            setEtat(material.etat);
+        }
+    }, [material]);
 
     const resetForm = () => {
         setDesign("");
-        setQuantite(1)
-    }
-
-
+        setQuantite(1);
+        setEtat("Mauvais");
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,9 +36,9 @@ function AddModal({ isOpen, setOpen, fetchMaterial }) {
         }
 
         try {
-            showLoading('Ajout en cours...');
+            showLoading('Modification en cours...');
 
-            const response = await axios.post('http://127.0.0.1:8000/api/add', {
+            const response = await axios.put(`http://127.0.0.1:8000/api/materials/${material.id}`, {
                 design,
                 quantite,
                 etat,
@@ -42,7 +48,7 @@ function AddModal({ isOpen, setOpen, fetchMaterial }) {
             close();
             fire({
                 icon: 'success',
-                title: 'Ajout réussi!',
+                title: 'Modification réussie!',
             });
 
             setOpen(false);
@@ -53,12 +59,11 @@ function AddModal({ isOpen, setOpen, fetchMaterial }) {
             close();
         }
     };
-    
+
     return (
         <div onClick={(e) => {
             if (e.target === e.currentTarget) {
                 setOpen(false);
-                // ${isOpen ? 'flex' : 'hidden'}
             }
         }} className={`w-full h-full bg-black/20 fixed top-0 left-0  p-10 items-center justify-center flex   ${isOpen ? 'flex' : 'hidden'}`} >
             <form onSubmit={handleSubmit} className='bg-white rounded-md lg:min-w-[400px] md:min-w-[300px] min-w-full   w-full p-5 space-y-4'>
@@ -84,4 +89,4 @@ function AddModal({ isOpen, setOpen, fetchMaterial }) {
     );
 }
 
-export default AddModal;
+export default EditModal;

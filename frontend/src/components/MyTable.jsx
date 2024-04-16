@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { TbTrashXFilled } from "react-icons/tb";
 import { CiEdit } from "react-icons/ci";
 import Swal from "sweetalert2"
-function MyTable({ data }) {
+import EditModal from './EditModal';
+
+
+function MyTable({ data,fetchMaterial }) {
 
     const deleteBtnClicked = (index) => {
         Swal.fire({
@@ -19,6 +22,14 @@ function MyTable({ data }) {
             }
         });
 
+    };
+
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [materialToEdit, setMaterialToEdit] = useState(null);
+
+    const openEditModalWithMaterial = (material) => {
+        setMaterialToEdit(material);
+        setOpenEditModal(true);
     };
 
 
@@ -48,15 +59,15 @@ function MyTable({ data }) {
                         return <tr className='text-center text-gray-800' style={{ backgroundColor: index % 2 == 0 ? "#B7BAC3" : "#E4E4E4" }} key={index}>
                             <td className='p-4 border-gray-200 border-r-[1px] font-bold'>{d.design}</td>
                             <td className='border-gray-200 border-r-[1px]'>
-                                {d.etat == 'Bon' && <span className="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                                {d.etat === 'Bon' && <span className="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
                                     <span className="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
                                     {d.etat}
                                 </span>}
-                                {d.etat == 'Mauvais' && <span className="inline-flex items-center bg-orange-100 text-orange-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
+                                {d.etat === 'Mauvais' && <span className="inline-flex items-center bg-orange-100 text-orange-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
                                     <span className="w-2 h-2 me-1 bg-orange-500 rounded-full"></span>
                                     {d.etat}
                                 </span>}
-                                {d.etat == 'Abimé' && <span className="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
+                                {d.etat === 'Abimé' && <span className="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
                                     <span className="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
                                     {d.etat}
                                 </span>}
@@ -68,7 +79,7 @@ function MyTable({ data }) {
                                 <button onClick={() => deleteBtnClicked(index)}>
                                     <TbTrashXFilled color='gray' />
                                 </button>
-                                <button>
+                                <button onClick={openEditModalWithMaterial(d)}>
                                     <CiEdit color='blue'/>
                                 </button>
                             </td>
@@ -76,6 +87,11 @@ function MyTable({ data }) {
                     })}
                 </tbody>
             </table>
+
+            {openEditModal && (
+                <EditModal isOpen={openEditModal} setOpen={setOpenEditModal} fetchMaterial={fetchMaterial} material={materialToEdit} />
+            )}
+
             <nav aria-label="mt-10">
                 <ul class="flex items-center -space-x-px h-10 text-base">
                     <li>
