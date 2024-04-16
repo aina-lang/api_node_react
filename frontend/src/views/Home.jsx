@@ -52,8 +52,8 @@ function Home() {
           <MyTable data={materiels} fetchMaterial={fetchMaterial} />
         </div>
         <div className="col-span-1 p-5 space-y-2">
-          <StatistiqueCard />
-          <MyStatistiqueCard />
+          <StatistiqueCard materiels={materiels}/>
+          <MyStatistiqueCard  materiels={materiels}/>
         </div>
       </div>
       <div

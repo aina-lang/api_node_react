@@ -3,11 +3,23 @@ import { TbTrashXFilled } from "react-icons/tb";
 import { CiEdit } from "react-icons/ci";
 import Swal from "sweetalert2"
 import EditModal from './EditModal';
+import axios from 'axios';
+import { UseSweetAlert } from '../context/sweetContext';
 
 
 function MyTable({ data,fetchMaterial }) {
 
-    const deleteBtnClicked = (index) => {
+    const { showLoading, close, fire} = UseSweetAlert();
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [materialToEdit, setMaterialToEdit] = useState(null);
+
+    const openEditModalWithMaterial = (material) => {
+        setMaterialToEdit(material);
+        setOpenEditModal(true);
+    };
+
+
+    const deleteBtnClicked = async (index) => {
         Swal.fire({
             title: 'Confirmation',
             text: 'Are you sure you want to delete this item?',
@@ -16,21 +28,31 @@ function MyTable({ data,fetchMaterial }) {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!',
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                console.log('Item deleted');
+                try {
+                    showLoading('Modification en cours...');
+    
+                    console.log(index);
+                    const response = await axios.delete(`http://127.0.0.1:8000/api/${index}`);
+    
+                    fetchMaterial();
+                    close();
+                    fire({
+                        icon: 'success',
+                        title: 'Modification réussie!',
+                    });
+    
+                   
+                    console.log('Success:', response.data);
+                } catch (error) {
+                    console.error('Error:', error);
+                    close();
+                }
             }
         });
-
     };
-
-    const [openEditModal, setOpenEditModal] = useState(false);
-    const [materialToEdit, setMaterialToEdit] = useState(null);
-
-    const openEditModalWithMaterial = (material) => {
-        setMaterialToEdit(material);
-        setOpenEditModal(true);
-    };
+    
 
 
     return (
@@ -76,10 +98,10 @@ function MyTable({ data,fetchMaterial }) {
                                 {d.quantite}
                             </td>
                             <td className='border-gray-200 border-r-[1px]  items-center space-x-4 justify-center'>
-                                <button onClick={() => deleteBtnClicked(index)}>
+                                <button onClick={() => deleteBtnClicked(d.id)}>
                                     <TbTrashXFilled color='gray' />
                                 </button>
-                                <button onClick={openEditModalWithMaterial(d)}>
+                                <button onClick={()=>{openEditModalWithMaterial(d)}}>
                                     <CiEdit color='blue'/>
                                 </button>
                             </td>
